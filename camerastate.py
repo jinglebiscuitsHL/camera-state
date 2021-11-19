@@ -10,7 +10,8 @@ class CameraState():
         self.permissionsGranted = BooleanVar()
         self.role = StringVar() # f2f, giver, receiver, observer
         self.role.set("f2f")
-        self.taskFieldSource = "none" #live, freeze, photo, document
+        self.taskFieldSource = StringVar() #live, freeze, photo, document
+        self.taskFieldSource.set("live")
         self.ghodMode = "navigating" #navigating, presenting
 
 class CameraStateUI(Frame):
@@ -45,6 +46,13 @@ class CameraStateUI(Frame):
         Radiobutton(roleFrame, text="giver", variable=self.cameraState.role, value="giver").pack(anchor=NW)
         Radiobutton(roleFrame, text="receiver", variable=self.cameraState.role, value="receiver").pack(anchor=NW)
         Radiobutton(roleFrame, text="observer", variable=self.cameraState.role, value="observer").pack(anchor=NW)
+
+        taskFieldSourceFrame = LabelFrame(root, text="Role")
+        taskFieldSourceFrame.pack(side=LEFT, anchor=NW)
+        Radiobutton(taskFieldSourceFrame, text="live", variable=self.cameraState.taskFieldSource, value="live").pack(anchor=NW)
+        Radiobutton(taskFieldSourceFrame, text="freeze", variable=self.cameraState.taskFieldSource, value="freeze").pack(anchor=NW)
+        Radiobutton(taskFieldSourceFrame, text="photo", variable=self.cameraState.taskFieldSource, value="photo").pack(anchor=NW)
+        Radiobutton(taskFieldSourceFrame, text="document", variable=self.cameraState.taskFieldSource, value="document").pack(anchor=NW)
 
     def create_callbacks(self):
         self.callCenterToggle["command"] = self.onCallCenterModeToggled
