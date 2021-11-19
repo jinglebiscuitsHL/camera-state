@@ -1,7 +1,7 @@
 from tkinter import *
 
 
-# Call Center Mode, Turn Off Giver's (Agent's) Camera, Permissions, Role, Task Field Source, GHoD mode, Camera Menu On, Camera Menu Off
+# Call Center Mode, Turn Off Giver's (Agent's) Camera, Permissions, Role, Task Field Source, GHoD mode, Camera Menu Toggle, GSS camera_on
 
 class CameraState():
     def __init__(self):
@@ -13,6 +13,10 @@ class CameraState():
         self.taskFieldSource = StringVar() #live, freeze, photo, document
         self.taskFieldSource.set("live")
         self.ghodMode = "navigating" #navigating, presenting
+        self.cameraMenuButtonOn = BooleanVar()
+        self.cameraMenuButtonOn.set(True)
+        self.gssCameraOn = BooleanVar()
+        self.gssCameraOn.set(True)
 
 class CameraStateUI(Frame):
     def __init__(self, master=None):
@@ -54,11 +58,25 @@ class CameraStateUI(Frame):
         Radiobutton(taskFieldSourceFrame, text="photo", variable=self.cameraState.taskFieldSource, value="photo").pack(anchor=NW)
         Radiobutton(taskFieldSourceFrame, text="document", variable=self.cameraState.taskFieldSource, value="document").pack(anchor=NW)
 
+        cameraMenuFrame = LabelFrame(root, text="Camera Menu")
+        cameraMenuFrame.pack(side=LEFT, anchor=NW)
+        Checkbutton(cameraMenuFrame, text="Camera On", variable=self.cameraState.cameraMenuButtonOn).pack()
+
+        gssCameraStateFrame = LabelFrame(root, text="GSS Camera State")
+        gssCameraStateFrame.pack(side=LEFT, anchor=NW)
+        self.gssCameraState = Checkbutton(gssCameraStateFrame, text="GSS Camera State On", variable=self.cameraState.cameraMenuButtonOn, state="disabled").pack()
+
     def create_callbacks(self):
         self.callCenterToggle["command"] = self.onCallCenterModeToggled
 
     def onCallCenterModeToggled(self):
         self.toggle_widget(self.agentCameraToggle)
+
+    def onCameraToggleButtonPressed(self):
+        if not self.cameraState.cameraMenuButtonOn.get():
+            self.cameraState.gssCameraOn.set(False)
+        else:
+            self.cameraState.gssCameraOn.set(True)
 
     def toggle_widget(self, widget):
         print(self.cameraState.callCenterMode.get())
