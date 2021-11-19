@@ -6,7 +6,7 @@ from tkinter import *
 class CameraState():
     def __init__(self):
         self.callCenterMode = BooleanVar()
-        self.turnOffGiverCamera = BooleanVar()
+        self.turnOffAgentCamera = BooleanVar()
         self.permissionsGranted = BooleanVar()
         self.role = "f2f" # f2f, giver, receiver, observer
         self.taskFieldSource = "none" #live, freeze, photo, document
@@ -31,11 +31,14 @@ class CameraStateUI(Frame):
         self.callCenterVar = IntVar()
         self.callCenterToggle = Checkbutton(callCenterFrame, text="Call Center Mode", variable=self.cameraState.callCenterMode)
         self.callCenterToggle.pack()
-        self.agentCameraToggle = Checkbutton(callCenterFrame, text="Agent Camera Off")
+        self.agentCameraToggle = Checkbutton(callCenterFrame, text="Agent Camera Off", state="disabled", variable=self.cameraState.turnOffAgentCamera)
         self.agentCameraToggle.pack()
+        
+        permissionsFrame = LabelFrame(root, text="Camera Permissions")
+        permissionsFrame.pace(side = LEFT)
 
     def create_callbacks(self):
-        self.callCenterToggle["command"] = self.onCallCenterModeToggled()
+        self.callCenterToggle["command"] = self.onCallCenterModeToggled
 
     def onCallCenterModeToggled(self):
         self.toggle_widget(self.agentCameraToggle)
