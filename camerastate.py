@@ -81,8 +81,6 @@ class CameraStateUI(Frame):
             self.cameraState.userIsAgent.set(False)
 
     def toggle_widget(self, widget):
-        print(self.cameraState.callCenterMode.get())
-        print("jedi", widget["state"])
         if widget["state"] != "disabled":
             widget["state"] = "disabled"
         else:
@@ -90,9 +88,9 @@ class CameraStateUI(Frame):
 
     def onPermissionsChanged(self):
         if self.cameraState.permissionsGranted.get():
-            self.cameraOnToggle["state"] = "normal"
+            self.enableCameraMenu()
         else:
-            self.cameraOnToggle["state"] = "disabled"
+            self.disableCameraMenu()
             self.cameraState.physicalCameraIsOn.set(False)
             self.cameraState.cameraMenuButtonOn.set(False)
 
@@ -101,9 +99,14 @@ class CameraStateUI(Frame):
             for widget in self.taskFieldSourceFrame.winfo_children():
                 widget["state"] = "disabled"
             self.cameraState.taskFieldSource.set("live")
+            self.enableCameraMenu()
         else:
             for widget in self.taskFieldSourceFrame.winfo_children():
                 widget["state"] = "normal"
+            if self.cameraState.role.get() == 'giver':
+                self.enableCameraMenu()
+            if self.cameraState.role.get() == 'observer':
+                self.disableCameraMenu()
 
 
     def onCameraToggleButtonPressed(self):
@@ -120,6 +123,14 @@ class CameraStateUI(Frame):
     def enable_widget(self, widget):
         widget.configure(state="normal")
 
+    def enableCameraMenu(self):
+        if (self.cameraState.userIsAgent.get() and self.cameraState.turnOffAgentCamera) or not self.cameraState.permissionsGranted.get() or self.cameraState.role.get() == "observer":
+            return
+        else:
+            self.cameraOnToggle['state'] = "normal"
+    
+    def disableCameraMenu(self):
+        self.cameraOnToggle['state'] = "disabled"
 
 root = Tk()
 app = CameraStateUI(master=root)
