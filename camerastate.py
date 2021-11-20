@@ -55,10 +55,10 @@ class CameraStateUI(Frame):
 
         self.taskFieldSourceFrame = LabelFrame(root, text="Task Field Source")
         self.taskFieldSourceFrame.pack(side=LEFT, anchor=NW)
-        Radiobutton(self.taskFieldSourceFrame, text="live", variable=self.cameraState.taskFieldSource, value="live").pack(anchor=NW)
-        Radiobutton(self.taskFieldSourceFrame, text="freeze", variable=self.cameraState.taskFieldSource, value="freeze").pack(anchor=NW)
-        Radiobutton(self.taskFieldSourceFrame, text="photo", variable=self.cameraState.taskFieldSource, value="photo").pack(anchor=NW)
-        Radiobutton(self.taskFieldSourceFrame, text="document", variable=self.cameraState.taskFieldSource, value="document").pack(anchor=NW)
+        Radiobutton(self.taskFieldSourceFrame, text="live", variable=self.cameraState.taskFieldSource, value="live", state="disabled").pack(anchor=NW)
+        Radiobutton(self.taskFieldSourceFrame, text="freeze", variable=self.cameraState.taskFieldSource, value="freeze", state="disabled").pack(anchor=NW)
+        Radiobutton(self.taskFieldSourceFrame, text="photo", variable=self.cameraState.taskFieldSource, value="photo", state="disabled").pack(anchor=NW)
+        Radiobutton(self.taskFieldSourceFrame, text="document", variable=self.cameraState.taskFieldSource, value="document", state="disabled").pack(anchor=NW)
 
         cameraMenuFrame = LabelFrame(root, text="Camera Menu")
         cameraMenuFrame.pack(side=LEFT, anchor=NW)
