@@ -63,7 +63,7 @@ class CameraStateUI(Frame):
 
         self.cameraMenuFrame = LabelFrame(root, text="Camera Menu")
         self.cameraMenuFrame.pack(side=LEFT, anchor=NW)
-        self.cameraOnToggle = Checkbutton(self.cameraMenuFrame, text="Camera On", variable=self.cameraState.cameraMenuButtonOn)
+        self.cameraOnToggle = Checkbutton(self.cameraMenuFrame, text="Camera On", variable=self.cameraState.cameraMenuButtonOn, command=self.onCameraToggleButtonPressed)
         self.cameraOnToggle.pack()
 
         gssCameraStateFrame = LabelFrame(root, text="GSS Camera State")
@@ -107,10 +107,12 @@ class CameraStateUI(Frame):
 
 
     def onCameraToggleButtonPressed(self):
-        if not self.cameraState.cameraMenuButtonOn.get():
-            self.cameraState.gssCameraOn.set(False)
-        else:
+        if self.cameraState.cameraMenuButtonOn.get():
             self.cameraState.gssCameraOn.set(True)
+            self.cameraState.physicalCameraIsOn.set(True)
+        else:
+            self.cameraState.gssCameraOn.set(False)
+            self.cameraState.physicalCameraIsOn.set(False)
 
     def disable_widget(self, widget):
         widget.configure(state="disabled")
