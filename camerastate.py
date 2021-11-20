@@ -140,7 +140,9 @@ class CameraStateUI(Frame):
         widget.configure(state="normal")
 
     def enableCameraMenu(self):
-        if (self.cameraState.userIsAgent.get() and self.cameraState.turnOffAgentCamera) or not self.cameraState.permissionsGranted.get() or self.cameraState.role.get() == "observer":
+        if ((self.cameraState.userIsAgent.get() and self.cameraState.turnOffAgentCamera)
+            or not self.cameraState.permissionsGranted.get()
+                or self.cameraState.role.get() == "observer"):
             return
         else:
             self.cameraOnToggle['state'] = "normal"
