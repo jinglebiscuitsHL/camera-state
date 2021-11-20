@@ -17,6 +17,8 @@ class CameraState():
         self.cameraMenuButtonOn.set(True)
         self.gssCameraOn = BooleanVar()
         self.gssCameraOn.set(True)
+        self.physicalCameraIsOn = BooleanVar()
+        self.physicalCameraIsOn.set(True)
 
 class CameraStateUI(Frame):
     def __init__(self, master=None):
@@ -65,6 +67,10 @@ class CameraStateUI(Frame):
         gssCameraStateFrame = LabelFrame(root, text="GSS Camera State")
         gssCameraStateFrame.pack(side=LEFT, anchor=NW)
         self.gssCameraState = Checkbutton(gssCameraStateFrame, text="GSS Camera State On", variable=self.cameraState.cameraMenuButtonOn, state="disabled").pack()
+
+        physicalCameraStateFrame = LabelFrame(root, text="Physical Camera State")
+        physicalCameraStateFrame.pack(side=LEFT, anchor=NW)
+        self.physicalCameraState = Checkbutton(physicalCameraStateFrame, text="Physical Camera On", variable=self.cameraState.physicalCameraIsOn, state="disabled").pack()
 
     def create_callbacks(self):
         self.callCenterToggle["command"] = self.onCallCenterModeToggled
