@@ -29,13 +29,19 @@ class CameraStateUI(Frame):
         self.master = master
         self.pack()
         self.cameraState = CameraState()
+        self.topFrame = Frame(self.master)
+        self.topFrame.pack(side=TOP, anchor=NW)
+        self.bottomFrame = Frame(self.master)
+        self.bottomFrame.pack(side=TOP, anchor=NW)
+        self.stateFrame = Frame(self.master, pady=30)
+        self.stateFrame.pack(side=TOP, anchor=NW)
         self.create_widgets()
 
     def test_command(self, text):
         print(text)
 
     def create_widgets(self):
-        callCenterFrame = LabelFrame(root, text="Call Center Mode")
+        callCenterFrame = LabelFrame(self.topFrame, text="Call Center Mode")
         callCenterFrame.pack(side=LEFT, anchor=NW)
         self.callCenterToggle = Checkbutton(callCenterFrame, text="Call Center Mode",
                                             variable=self.cameraState.callCenterMode, command=self.onCallCenterModeChanged)
@@ -47,12 +53,12 @@ class CameraStateUI(Frame):
             callCenterFrame, text="User Is Agent", state="disabled", variable=self.cameraState.userIsAgent, command=self.onCallCenterModeChanged)
         self.userIsAgentToggle.pack(anchor=NW)
 
-        permissionsFrame = LabelFrame(root, text="Camera Permissions")
+        permissionsFrame = LabelFrame(self.topFrame, text="Camera Permissions")
         permissionsFrame.pack(side=LEFT, anchor=NW)
         self.cameraPermissionsToggle = Checkbutton(permissionsFrame, text="Camera Permissions Granted",
                                                    variable=self.cameraState.permissionsGranted, command=self.onPermissionsChanged).pack()
 
-        roleFrame = LabelFrame(root, text="Role")
+        roleFrame = LabelFrame(self.bottomFrame, text="Role")
         roleFrame.pack(side=LEFT, anchor=NW)
         Radiobutton(roleFrame, text="f2f", variable=self.cameraState.role,
                     value="f2f", command=self.onRoleChanged).pack(anchor=NW)
@@ -63,7 +69,7 @@ class CameraStateUI(Frame):
         Radiobutton(roleFrame, text="observer", variable=self.cameraState.role,
                     value="observer", command=self.onRoleChanged).pack(anchor=NW)
 
-        self.taskFieldSourceFrame = LabelFrame(root, text="Task Field Source")
+        self.taskFieldSourceFrame = LabelFrame(self.bottomFrame, text="Task Field Source")
         self.taskFieldSourceFrame.pack(side=LEFT, anchor=NW)
         Radiobutton(self.taskFieldSourceFrame, text="live",
                     variable=self.cameraState.taskFieldSource, value="live", state="disabled").pack(anchor=NW)
@@ -74,19 +80,19 @@ class CameraStateUI(Frame):
         Radiobutton(self.taskFieldSourceFrame, text="document",
                     variable=self.cameraState.taskFieldSource, value="document", state="disabled").pack(anchor=NW)
 
-        self.cameraMenuFrame = LabelFrame(root, text="Camera Menu")
+        self.cameraMenuFrame = LabelFrame(self.bottomFrame, text="Camera Menu")
         self.cameraMenuFrame.pack(side=LEFT, anchor=NW)
         self.cameraOnToggle = Checkbutton(self.cameraMenuFrame, text="Camera On",
                                           variable=self.cameraState.cameraMenuButtonOn, command=self.onCameraToggleButtonPressed)
         self.cameraOnToggle.pack()
 
-        gssCameraStateFrame = LabelFrame(root, text="GSS Camera State")
+        gssCameraStateFrame = LabelFrame(self.stateFrame, text="GSS Camera State")
         gssCameraStateFrame.pack(side=LEFT, anchor=NW)
         self.gssCameraState = Checkbutton(gssCameraStateFrame, text="GSS Camera State On",
                                           variable=self.cameraState.cameraMenuButtonOn, state="disabled").pack()
 
         physicalCameraStateFrame = LabelFrame(
-            root, text="Physical Camera State")
+            self.stateFrame, text="Physical Camera State")
         physicalCameraStateFrame.pack(side=LEFT, anchor=NW)
         self.physicalCameraState = Checkbutton(
             physicalCameraStateFrame, text="Physical Camera On", variable=self.cameraState.physicalCameraIsOn, state="disabled").pack()
