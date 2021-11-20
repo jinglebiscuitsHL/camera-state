@@ -48,17 +48,17 @@ class CameraStateUI(Frame):
 
         roleFrame = LabelFrame(root, text="Role")
         roleFrame.pack(side=LEFT, anchor=NW)
-        Radiobutton(roleFrame, text="f2f", variable=self.cameraState.role, value="f2f").pack(anchor=NW)
-        Radiobutton(roleFrame, text="giver", variable=self.cameraState.role, value="giver").pack(anchor=NW)
-        Radiobutton(roleFrame, text="receiver", variable=self.cameraState.role, value="receiver").pack(anchor=NW)
-        Radiobutton(roleFrame, text="observer", variable=self.cameraState.role, value="observer").pack(anchor=NW)
+        Radiobutton(roleFrame, text="f2f", variable=self.cameraState.role, value="f2f", command=self.onRoleChanged).pack(anchor=NW)
+        Radiobutton(roleFrame, text="giver", variable=self.cameraState.role, value="giver", command=self.onRoleChanged).pack(anchor=NW)
+        Radiobutton(roleFrame, text="receiver", variable=self.cameraState.role, value="receiver", command=self.onRoleChanged).pack(anchor=NW)
+        Radiobutton(roleFrame, text="observer", variable=self.cameraState.role, value="observer", command=self.onRoleChanged).pack(anchor=NW)
 
-        taskFieldSourceFrame = LabelFrame(root, text="Role")
-        taskFieldSourceFrame.pack(side=LEFT, anchor=NW)
-        Radiobutton(taskFieldSourceFrame, text="live", variable=self.cameraState.taskFieldSource, value="live").pack(anchor=NW)
-        Radiobutton(taskFieldSourceFrame, text="freeze", variable=self.cameraState.taskFieldSource, value="freeze").pack(anchor=NW)
-        Radiobutton(taskFieldSourceFrame, text="photo", variable=self.cameraState.taskFieldSource, value="photo").pack(anchor=NW)
-        Radiobutton(taskFieldSourceFrame, text="document", variable=self.cameraState.taskFieldSource, value="document").pack(anchor=NW)
+        self.taskFieldSourceFrame = LabelFrame(root, text="Task Field Source")
+        self.taskFieldSourceFrame.pack(side=LEFT, anchor=NW)
+        Radiobutton(self.taskFieldSourceFrame, text="live", variable=self.cameraState.taskFieldSource, value="live").pack(anchor=NW)
+        Radiobutton(self.taskFieldSourceFrame, text="freeze", variable=self.cameraState.taskFieldSource, value="freeze").pack(anchor=NW)
+        Radiobutton(self.taskFieldSourceFrame, text="photo", variable=self.cameraState.taskFieldSource, value="photo").pack(anchor=NW)
+        Radiobutton(self.taskFieldSourceFrame, text="document", variable=self.cameraState.taskFieldSource, value="document").pack(anchor=NW)
 
         cameraMenuFrame = LabelFrame(root, text="Camera Menu")
         cameraMenuFrame.pack(side=LEFT, anchor=NW)
@@ -77,6 +77,16 @@ class CameraStateUI(Frame):
 
     def onCallCenterModeToggled(self):
         self.toggle_widget(self.agentCameraToggle)
+
+    def onRoleChanged(self):
+        if self.cameraState.role.get() == "f2f":
+            for widget in self.taskFieldSourceFrame.winfo_children():
+                widget["state"] = "disabled"
+            self.cameraState.taskFieldSource.set("live")
+        else:
+            for widget in self.taskFieldSourceFrame.winfo_children():
+                widget["state"] = "normal"
+
 
     def onCameraToggleButtonPressed(self):
         if not self.cameraState.cameraMenuButtonOn.get():
