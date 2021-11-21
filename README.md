@@ -27,6 +27,7 @@ brew install python-tk
 Use python3 to run `camerastate.py`. A window should be created where you can manipulate the various properties that affect the camera in HL.
 
 ![screenshot](/camerastate_screenshot.png)
+
 The bottom row of settings (GSS Camera State and Physical Camera State) are particularly important, and will be the hardest to get right.
 ## Who maintains the project
 This project will only be useful if multiple people from multiple teams interact with it and give feedback. Scott Wehby will maintain the project, but anyone is welcome to submit pull requests.
