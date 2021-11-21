@@ -15,6 +15,9 @@ class CameraState():
         self.taskFieldSource = StringVar()  # live, freeze, photo, document
         self.taskFieldSource.set("live")
         self.ghodMode = "navigating"  # navigating, presenting
+        self.cameraMenuAvailable = BooleanVar()
+        self.cameraMenuAvailable.set(True)
+        self.cameraMenuAvailable
         self.cameraMenuButtonOn = BooleanVar()
         self.cameraMenuButtonOn.set(True)
         self.gssCameraOn = BooleanVar()
@@ -23,7 +26,8 @@ class CameraState():
         self.physicalCameraState.set("On")
 
     def turnCameraOn(self):
-        if self.role.get() == "observer" or not self.permissionsGranted.get() or not self.cameraMenuButtonOn.get():
+        if (self.role.get() == "observer" or not self.permissionsGranted.get() or not self.cameraMenuButtonOn.get()
+                or (self.callCenterMode.get() and self.turnOffAgentCamera.get() and self.userIsAgent.get())):
             return
         self.physicalCameraState.set("On")
 
@@ -33,10 +37,22 @@ class CameraState():
     def verifyState(self):
         """Returns -1 if the state is incorrect. Returns 0 otherwise"""
         if (self.role.get() == 'observer' or not self.permissionsGranted.get() or not self.cameraMenuButtonOn.get()
-            or (self.role.get() == 'receiver' and self.taskFieldSource.get() != 'live')):
+            or (self.role.get() == 'receiver' and self.taskFieldSource.get() != 'live')
+                or (self.callCenterMode.get() and self.turnOffAgentCamera.get() and self.userIsAgent.get())):
             if self.physicalCameraState.get() == "On":
                 # perm granted, receiver, freeze, cam on, physical cam on, switch on call center mode
                 raise Exception
+        if (not self.shouldCameraMenuBeAvailable() and self.cameraMenuAvailable.get()):
+            if self.cameraMenuAvailable.get():
+                raise Exception
+
+    def shouldCameraMenuBeAvailable(self):
+        if (self.role.get() == 'observer' or not self.permissionsGranted.get() or
+            (self.role.get() == 'receiver' and self.taskFieldSource.get() != 'live') or
+                (self.userIsAgent.get() and self.turnOffAgentCamera.get())):
+            return False
+        else:
+            return True
 
 
 class CameraStateUI(Frame):
@@ -85,7 +101,8 @@ class CameraStateUI(Frame):
         Radiobutton(roleFrame, text="observer", variable=self.cameraState.role,
                     value="observer", command=self.onRoleChanged).pack(anchor=NW)
 
-        self.taskFieldSourceFrame = LabelFrame(self.bottomFrame, text="Task Field Source")
+        self.taskFieldSourceFrame = LabelFrame(
+            self.bottomFrame, text="Task Field Source")
         self.taskFieldSourceFrame.pack(side=LEFT, anchor=NW)
         Radiobutton(self.taskFieldSourceFrame, text="live",
                     variable=self.cameraState.taskFieldSource, value="live", state="disabled", command=self.onTaskFieldChanged).pack(anchor=NW)
@@ -102,19 +119,24 @@ class CameraStateUI(Frame):
                                           variable=self.cameraState.cameraMenuButtonOn, command=self.onCameraToggleButtonPressed)
         self.cameraOnToggle.pack()
 
-        gssCameraStateFrame = LabelFrame(self.stateFrame, text="GSS Camera State")
+        gssCameraStateFrame = LabelFrame(
+            self.stateFrame, text="GSS Camera State")
         gssCameraStateFrame.pack(side=LEFT, anchor=NW)
         self.gssCameraState = Checkbutton(gssCameraStateFrame, text="GSS Camera State On",
                                           variable=self.cameraState.cameraMenuButtonOn, state="disabled").pack()
+        self.cameraState.cameraMenuAvailable.trace_add(
+            "write", self.updateCameraMenuFrame)
 
         physicalCameraStateFrame = LabelFrame(
             self.stateFrame, text="Physical Camera State")
         physicalCameraStateFrame.pack(side=LEFT, anchor=NW)
         self.physicalCameraState = Checkbutton(
             physicalCameraStateFrame, text="Physical Camera On", variable=self.cameraState.physicalCameraState, onvalue="On", offvalue="Off", state="disabled").pack()
-        self.cameraLabel = Label(physicalCameraStateFrame, textvariable=self.cameraState.physicalCameraState).pack()
+        self.cameraLabel = Label(
+            physicalCameraStateFrame, textvariable=self.cameraState.physicalCameraState).pack()
 
     def onCallCenterModeChanged(self):
+        print("onCallCenterModeChanged")
         if self.cameraState.callCenterMode.get():
             self.enableWidget(self.agentCameraToggle)
             self.enableWidget(self.userIsAgentToggle)
@@ -130,6 +152,7 @@ class CameraStateUI(Frame):
         self.cameraState.verifyState()
 
     def onPermissionsChanged(self):
+        print("onPermissionsChanged")
         if self.cameraState.permissionsGranted.get():
             self.enableCameraMenu()
         else:
@@ -139,6 +162,7 @@ class CameraStateUI(Frame):
         self.cameraState.verifyState()
 
     def onRoleChanged(self):
+        print("onRoleChanged")
         if self.cameraState.role.get() == "f2f":
             for widget in self.taskFieldSourceFrame.winfo_children():
                 self.disableWidget(widget)
@@ -159,6 +183,7 @@ class CameraStateUI(Frame):
         self.cameraState.verifyState()
 
     def onTaskFieldChanged(self):
+        print("onTaskFieldChanged")
         if self.cameraState.role.get() == "receiver":
             if self.cameraState.taskFieldSource.get() == "live":
                 self.cameraState.turnCameraOn()
@@ -169,6 +194,7 @@ class CameraStateUI(Frame):
         self.cameraState.verifyState()
 
     def onCameraToggleButtonPressed(self):
+        print("onCameraToggleButtonPressed")
         if self.cameraState.cameraMenuButtonOn.get():
             self.cameraState.gssCameraOn.set(True)
             self.cameraState.turnCameraOn()
@@ -177,6 +203,12 @@ class CameraStateUI(Frame):
             self.cameraState.turnCameraOff()
         self.cameraState.verifyState()
 
+    def updateCameraMenuFrame(self, var, indx, mode):
+        if self.cameraState.cameraMenuAvailable.get():
+            self.cameraMenuFrame.pack()
+        else:
+            self.cameraMenuFrame.pack_forget()
+
     def disableWidget(self, widget):
         widget['state'] = "disabled"
 
@@ -184,18 +216,14 @@ class CameraStateUI(Frame):
         widget['state'] = "normal"
 
     def enableCameraMenu(self):
-        if ((self.cameraState.userIsAgent.get() and self.cameraState.turnOffAgentCamera.get())
-            or not self.cameraState.permissionsGranted.get()
-                or self.cameraState.role.get() == "observer"):
-            return
-        else:
-            self.enableWidget(self.cameraOnToggle)
+        if self.cameraState.shouldCameraMenuBeAvailable():
+            self.cameraState.cameraMenuAvailable.set(True)
             if self.cameraState.cameraMenuButtonOn.get():
                 self.cameraState.turnCameraOn()
 
     def disableCameraMenu(self):
-        self.disableWidget(self.cameraOnToggle)
         self.cameraState.turnCameraOff()
+        self.cameraState.cameraMenuAvailable.set(False)
 
 
 root = Tk()
