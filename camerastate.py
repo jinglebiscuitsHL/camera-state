@@ -23,7 +23,7 @@ class CameraState():
         self.physicalCameraState.set("On")
 
     def turnCameraOn(self):
-        if self.role.get() == "observer" or not self.permissionsGranted.get():
+        if self.role.get() == "observer" or not self.permissionsGranted.get() or not self.cameraMenuButtonOn.get():
             return
         self.physicalCameraState.set("On")
 
@@ -147,6 +147,7 @@ class CameraStateUI(Frame):
                 self.enableCameraMenu()
                 self.onTaskFieldChanged()
             if self.cameraState.role.get() == 'receiver':
+                self.cameraState.cameraMenuButtonOn.set(True)
                 self.enableCameraMenu()
                 self.onTaskFieldChanged()
             if self.cameraState.role.get() == 'observer':
@@ -182,9 +183,12 @@ class CameraStateUI(Frame):
             return
         else:
             self.enableWidget(self.cameraOnToggle)
+            if self.cameraState.cameraMenuButtonOn.get():
+                self.cameraState.turnCameraOn()
 
     def disableCameraMenu(self):
         self.disableWidget(self.cameraOnToggle)
+        self.cameraState.turnCameraOff()
 
 
 root = Tk()
