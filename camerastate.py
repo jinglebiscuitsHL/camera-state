@@ -22,6 +22,14 @@ class CameraState():
         self.physicalCameraState = StringVar()
         self.physicalCameraState.set("On")
 
+    def turnCameraOn(self):
+        if self.role.get() == "observer" or not self.permissionsGranted.get():
+            return
+        self.physicalCameraState.set("On")
+
+    def turnCameraOff(self):
+        self.physicalCameraState.set("Off")
+
 
 class CameraStateUI(Frame):
     def __init__(self, master=None):
@@ -72,13 +80,13 @@ class CameraStateUI(Frame):
         self.taskFieldSourceFrame = LabelFrame(self.bottomFrame, text="Task Field Source")
         self.taskFieldSourceFrame.pack(side=LEFT, anchor=NW)
         Radiobutton(self.taskFieldSourceFrame, text="live",
-                    variable=self.cameraState.taskFieldSource, value="live", state="disabled").pack(anchor=NW)
+                    variable=self.cameraState.taskFieldSource, value="live", state="disabled", command=self.onTaskFieldChanged).pack(anchor=NW)
         Radiobutton(self.taskFieldSourceFrame, text="freeze",
-                    variable=self.cameraState.taskFieldSource, value="freeze", state="disabled").pack(anchor=NW)
+                    variable=self.cameraState.taskFieldSource, value="freeze", state="disabled", command=self.onTaskFieldChanged).pack(anchor=NW)
         Radiobutton(self.taskFieldSourceFrame, text="photo",
-                    variable=self.cameraState.taskFieldSource, value="photo", state="disabled").pack(anchor=NW)
+                    variable=self.cameraState.taskFieldSource, value="photo", state="disabled", command=self.onTaskFieldChanged).pack(anchor=NW)
         Radiobutton(self.taskFieldSourceFrame, text="document",
-                    variable=self.cameraState.taskFieldSource, value="document", state="disabled").pack(anchor=NW)
+                    variable=self.cameraState.taskFieldSource, value="document", state="disabled", command=self.onTaskFieldChanged).pack(anchor=NW)
 
         self.cameraMenuFrame = LabelFrame(self.bottomFrame, text="Camera Menu")
         self.cameraMenuFrame.pack(side=LEFT, anchor=NW)
@@ -123,7 +131,7 @@ class CameraStateUI(Frame):
             self.enableCameraMenu()
         else:
             self.disableCameraMenu()
-            self.cameraState.physicalCameraState.set("Off")
+            self.cameraState.turnCameraOff()
             self.cameraState.cameraMenuButtonOn.set(False)
 
     def onRoleChanged(self):
@@ -137,16 +145,29 @@ class CameraStateUI(Frame):
                 widget["state"] = "normal"
             if self.cameraState.role.get() == 'giver':
                 self.enableCameraMenu()
+                self.onTaskFieldChanged()
+            if self.cameraState.role.get() == 'receiver':
+                self.enableCameraMenu()
+                self.onTaskFieldChanged()
             if self.cameraState.role.get() == 'observer':
+                self.disableCameraMenu()
+
+    def onTaskFieldChanged(self):
+        if self.cameraState.role.get() == "receiver":
+            if self.cameraState.taskFieldSource.get() == "live":
+                self.cameraState.turnCameraOn()
+                self.enableCameraMenu()
+            else:
+                self.cameraState.turnCameraOff()
                 self.disableCameraMenu()
 
     def onCameraToggleButtonPressed(self):
         if self.cameraState.cameraMenuButtonOn.get():
             self.cameraState.gssCameraOn.set(True)
-            self.cameraState.physicalCameraState.set("On")
+            self.cameraState.turnCameraOn()
         else:
             self.cameraState.gssCameraOn.set(False)
-            self.cameraState.physicalCameraState.set("Off")
+            self.cameraState.turnCameraOff()
 
     def disable_widget(self, widget):
         widget.configure(state="disabled")
