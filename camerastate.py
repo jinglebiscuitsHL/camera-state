@@ -120,12 +120,6 @@ class CameraStateUI(Frame):
         else:
             self.enableCameraMenu()
 
-    def toggle_widget(self, widget):
-        if widget["state"] != "disabled":
-            self.disableWidget(widget)
-        else:
-            self.enableWidget(widget)
-
     def onPermissionsChanged(self):
         if self.cameraState.permissionsGranted.get():
             self.enableCameraMenu()
