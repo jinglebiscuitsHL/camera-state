@@ -30,6 +30,14 @@ class CameraState():
     def turnCameraOff(self):
         self.physicalCameraState.set("Off")
 
+    def verifyState(self):
+        """Returns -1 if the state is incorrect. Returns 0 otherwise"""
+        if (self.role.get() == 'observer' or not self.permissionsGranted.get() or not self.cameraMenuButtonOn.get()
+            or (self.role.get() == 'receiver' and self.taskFieldSource.get() != 'live')):
+            if self.physicalCameraState.get() == "On":
+                # perm granted, receiver, freeze, cam on, physical cam on, switch on call center mode
+                raise Exception
+
 
 class CameraStateUI(Frame):
     def __init__(self, master=None):
@@ -119,6 +127,7 @@ class CameraStateUI(Frame):
             self.disableCameraMenu()
         else:
             self.enableCameraMenu()
+        self.cameraState.verifyState()
 
     def onPermissionsChanged(self):
         if self.cameraState.permissionsGranted.get():
@@ -127,6 +136,7 @@ class CameraStateUI(Frame):
             self.disableCameraMenu()
             self.cameraState.turnCameraOff()
             self.cameraState.cameraMenuButtonOn.set(False)
+        self.cameraState.verifyState()
 
     def onRoleChanged(self):
         if self.cameraState.role.get() == "f2f":
@@ -146,6 +156,7 @@ class CameraStateUI(Frame):
                 self.onTaskFieldChanged()
             if self.cameraState.role.get() == 'observer':
                 self.disableCameraMenu()
+        self.cameraState.verifyState()
 
     def onTaskFieldChanged(self):
         if self.cameraState.role.get() == "receiver":
@@ -155,6 +166,7 @@ class CameraStateUI(Frame):
             else:
                 self.cameraState.turnCameraOff()
                 self.disableCameraMenu()
+        self.cameraState.verifyState()
 
     def onCameraToggleButtonPressed(self):
         if self.cameraState.cameraMenuButtonOn.get():
@@ -163,6 +175,7 @@ class CameraStateUI(Frame):
         else:
             self.cameraState.gssCameraOn.set(False)
             self.cameraState.turnCameraOff()
+        self.cameraState.verifyState()
 
     def disableWidget(self, widget):
         widget['state'] = "disabled"
