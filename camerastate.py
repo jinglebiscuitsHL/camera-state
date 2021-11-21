@@ -192,5 +192,6 @@ class CameraStateUI(Frame):
 
 
 root = Tk()
+root.title("HL Camera State Machine")
 app = CameraStateUI(master=root)
 app.mainloop()
