@@ -19,8 +19,8 @@ class CameraState():
         self.cameraMenuButtonOn.set(True)
         self.gssCameraOn = BooleanVar()
         self.gssCameraOn.set(True)
-        self.physicalCameraIsOn = BooleanVar()
-        self.physicalCameraIsOn.set(True)
+        self.physicalCameraState = StringVar()
+        self.physicalCameraState.set("On")
 
 
 class CameraStateUI(Frame):
@@ -95,7 +95,8 @@ class CameraStateUI(Frame):
             self.stateFrame, text="Physical Camera State")
         physicalCameraStateFrame.pack(side=LEFT, anchor=NW)
         self.physicalCameraState = Checkbutton(
-            physicalCameraStateFrame, text="Physical Camera On", variable=self.cameraState.physicalCameraIsOn, state="disabled").pack()
+            physicalCameraStateFrame, text="Physical Camera On", variable=self.cameraState.physicalCameraState, onvalue="On", offvalue="Off", state="disabled").pack()
+        self.cameraLabel = Label(physicalCameraStateFrame, textvariable=self.cameraState.physicalCameraState).pack()
 
     def onCallCenterModeChanged(self):
         if self.cameraState.callCenterMode.get():
@@ -122,7 +123,7 @@ class CameraStateUI(Frame):
             self.enableCameraMenu()
         else:
             self.disableCameraMenu()
-            self.cameraState.physicalCameraIsOn.set(False)
+            self.cameraState.physicalCameraState.set("Off")
             self.cameraState.cameraMenuButtonOn.set(False)
 
     def onRoleChanged(self):
@@ -142,10 +143,10 @@ class CameraStateUI(Frame):
     def onCameraToggleButtonPressed(self):
         if self.cameraState.cameraMenuButtonOn.get():
             self.cameraState.gssCameraOn.set(True)
-            self.cameraState.physicalCameraIsOn.set(True)
+            self.cameraState.physicalCameraState.set("On")
         else:
             self.cameraState.gssCameraOn.set(False)
-            self.cameraState.physicalCameraIsOn.set(False)
+            self.cameraState.physicalCameraState.set("Off")
 
     def disable_widget(self, widget):
         widget.configure(state="disabled")
