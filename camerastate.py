@@ -88,7 +88,7 @@ class CameraStateUI(Frame):
     def create_widgets(self):
         callCenterFrame = LabelFrame(self.callCenterFrame, text="Call Center Mode")
         callCenterFrame.pack(side=LEFT, anchor=NW)
-        Label(callCenterFrame, text="Changing these settings resets the call.").pack(anchor=NW)
+        Label(callCenterFrame, text="Changing these settings resets the call.\nThese values can't change after the call starts.", justify='left').pack(anchor=NW)
         self.callCenterToggle = Checkbutton(callCenterFrame, text="Call Center Mode",
                                             variable=self.callCenterState.callCenterMode, command=self.onCallCenterModeChanged)
         self.callCenterToggle.pack(anchor=NW)
