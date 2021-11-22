@@ -32,10 +32,13 @@ class CameraState():
         self.role.set("f2f")
         self.taskFieldSource.set("live")
         self.ghodMode = "navigating"  # navigating, presenting
-        self.cameraMenuAvailable.set(True)
-        self.cameraMenuButtonOn.set(True)
+        self.cameraMenuAvailable.set(not self.cameraDisabled)
+        self.cameraMenuButtonOn.set(not self.cameraDisabled)
         self.gssCameraOn.set(True)
-        self.physicalCameraState.set("On")
+        if self.cameraDisabled:
+            self.physicalCameraState.set("Off")
+        else:
+            self.physicalCameraState.set("On")
 
     def turnCameraOn(self):
         if (self.role.get() == "observer" or not self.permissionsGranted.get() or not self.cameraMenuButtonOn.get()
@@ -53,6 +56,7 @@ class CameraState():
                 or self.cameraDisabled):
             if self.physicalCameraState.get() == "On":
                 # perm granted, receiver, freeze, cam on, physical cam on, switch on call center mode
+                print(self.cameraDisabled)
                 raise Exception
         if (not self.shouldCameraMenuBeAvailable() and self.cameraMenuAvailable.get()):
             if self.cameraMenuAvailable.get():
@@ -88,6 +92,7 @@ class CameraStateUI(Frame):
     def create_widgets(self):
         callCenterFrame = LabelFrame(self.callCenterFrame, text="Call Center Mode")
         callCenterFrame.pack(side=LEFT, anchor=NW)
+        Label(callCenterFrame, text="Changing these settings resets the call.").pack(anchor=NW)
         self.callCenterToggle = Checkbutton(callCenterFrame, text="Call Center Mode",
                                             variable=self.callCenterState.callCenterMode, command=self.onCallCenterModeChanged)
         self.callCenterToggle.pack(anchor=NW)
@@ -159,6 +164,7 @@ class CameraStateUI(Frame):
         if self.userIsAgentToggle['state'] == "disabled":
             self.callCenterState.userIsAgent.set(False)
         self.cameraState.startCall(self.callCenterState.isCameraDisabled())
+        self.onRoleChanged()
         self.cameraState.verifyState()
 
     def onPermissionsChanged(self):
