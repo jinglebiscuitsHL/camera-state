@@ -56,7 +56,6 @@ class CameraState():
                 or self.cameraDisabled):
             if self.physicalCameraState.get() == "On":
                 # perm granted, receiver, freeze, cam on, physical cam on, switch on call center mode
-                print(self.cameraDisabled)
                 raise Exception
         if (not self.shouldCameraMenuBeAvailable() and self.cameraMenuAvailable.get()):
             if self.cameraMenuAvailable.get():
@@ -85,9 +84,6 @@ class CameraStateUI(Frame):
         self.stateFrame = Frame(self.master, pady=30)
         self.stateFrame.pack(side=TOP, anchor=NW)
         self.create_widgets()
-
-    def test_command(self, text):
-        print(text)
 
     def create_widgets(self):
         callCenterFrame = LabelFrame(self.callCenterFrame, text="Call Center Mode")
