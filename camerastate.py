@@ -49,18 +49,6 @@ class CameraState():
     def turnCameraOff(self):
         self.physicalCameraState.set("Off")
 
-    def verifyState(self):
-        """Returns -1 if the state is incorrect. Returns 0 otherwise"""
-        if (self.role.get() == 'observer' or not self.permissionsGranted.get() or not self.cameraMenuButtonOn.get()
-            or (self.role.get() == 'receiver' and self.taskFieldSource.get() != 'live')
-                or self.cameraDisabled):
-            if self.physicalCameraState.get() == "On":
-                # perm granted, receiver, freeze, cam on, physical cam on, switch on call center mode
-                raise Exception
-        if (not self.shouldCameraMenuBeAvailable() and self.cameraMenuAvailable.get()):
-            if self.cameraMenuAvailable.get():
-                raise Exception
-
     def shouldCameraMenuBeAvailable(self):
         if (self.role.get() == 'observer' or not self.permissionsGranted.get() or
             (self.role.get() == 'receiver' and self.taskFieldSource.get() != 'live') or
@@ -78,6 +66,18 @@ class CameraState():
     def disableCameraMenu(self):
         self.turnCameraOff()
         self.cameraMenuAvailable.set(False)
+
+    def verifyState(self):
+        """Returns -1 if the state is incorrect. Returns 0 otherwise"""
+        if (self.role.get() == 'observer' or not self.permissionsGranted.get() or not self.cameraMenuButtonOn.get()
+            or (self.role.get() == 'receiver' and self.taskFieldSource.get() != 'live')
+                or self.cameraDisabled):
+            if self.physicalCameraState.get() == "On":
+                # perm granted, receiver, freeze, cam on, physical cam on, switch on call center mode
+                raise Exception
+        if (not self.shouldCameraMenuBeAvailable() and self.cameraMenuAvailable.get()):
+            if self.cameraMenuAvailable.get():
+                raise Exception
 
 
 class CameraStateUI(Frame):
