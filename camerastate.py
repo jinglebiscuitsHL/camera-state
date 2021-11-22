@@ -69,6 +69,16 @@ class CameraState():
         else:
             return True
 
+    def enableCameraMenu(self):
+        if self.shouldCameraMenuBeAvailable():
+            self.cameraMenuAvailable.set(True)
+            if self.cameraMenuButtonOn.get():
+                self.turnCameraOn()
+
+    def disableCameraMenu(self):
+        self.turnCameraOff()
+        self.cameraMenuAvailable.set(False)
+
 
 class CameraStateUI(Frame):
     def __init__(self, master=None):
@@ -166,9 +176,9 @@ class CameraStateUI(Frame):
     def onPermissionsChanged(self):
         print("onPermissionsChanged")
         if self.cameraState.permissionsGranted.get():
-            self.enableCameraMenu()
+            self.cameraState.enableCameraMenu()
         else:
-            self.disableCameraMenu()
+            self.cameraState.disableCameraMenu()
             self.cameraState.turnCameraOff()
             self.cameraState.cameraMenuButtonOn.set(False)
         self.cameraState.verifyState()
@@ -179,19 +189,19 @@ class CameraStateUI(Frame):
             for widget in self.taskFieldSourceFrame.winfo_children():
                 self.disableWidget(widget)
             self.cameraState.taskFieldSource.set("live")
-            self.enableCameraMenu()
+            self.cameraState.enableCameraMenu()
         else:
             for widget in self.taskFieldSourceFrame.winfo_children():
                 self.enableWidget(widget)
             if self.cameraState.role.get() == 'giver':
-                self.enableCameraMenu()
+                self.cameraState.enableCameraMenu()
                 self.onTaskFieldChanged()
             if self.cameraState.role.get() == 'receiver':
                 self.cameraState.cameraMenuButtonOn.set(True)
-                self.enableCameraMenu()
+                self.cameraState.enableCameraMenu()
                 self.onTaskFieldChanged()
             if self.cameraState.role.get() == 'observer':
-                self.disableCameraMenu()
+                self.cameraState.disableCameraMenu()
         self.cameraState.verifyState()
 
     def onTaskFieldChanged(self):
@@ -199,10 +209,10 @@ class CameraStateUI(Frame):
         if self.cameraState.role.get() == "receiver":
             if self.cameraState.taskFieldSource.get() == "live":
                 self.cameraState.turnCameraOn()
-                self.enableCameraMenu()
+                self.cameraState.enableCameraMenu()
             else:
                 self.cameraState.turnCameraOff()
-                self.disableCameraMenu()
+                self.cameraState.disableCameraMenu()
         self.cameraState.verifyState()
 
     def onCameraToggleButtonPressed(self):
@@ -220,16 +230,6 @@ class CameraStateUI(Frame):
             self.cameraMenuFrame.pack()
         else:
             self.cameraMenuFrame.pack_forget()
-
-    def enableCameraMenu(self):
-        if self.cameraState.shouldCameraMenuBeAvailable():
-            self.cameraState.cameraMenuAvailable.set(True)
-            if self.cameraState.cameraMenuButtonOn.get():
-                self.cameraState.turnCameraOn()
-
-    def disableCameraMenu(self):
-        self.cameraState.turnCameraOff()
-        self.cameraState.cameraMenuAvailable.set(False)
 
     def disableWidget(self, widget):
         widget['state'] = "disabled"
