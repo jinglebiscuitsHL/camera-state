@@ -23,7 +23,9 @@ class CameraState():
     - Activity onPause and onResume (Android)
     - background detection when becoming Giver
     - sub states of freezing
-    - separate state of camera when in GHoD mode as the Giver"""
+    - separate state of camera when in GHoD mode as the Giver
+      - Gss turn off the all participants’ camera when entering doc sharing mode, then RESTORE them when exiting doc sharing
+        the restore means, set camera back to the original status before entering doc sharing"""
     def __init__(self, camera_disabled):
         self.permissionsGranted = BooleanVar()
         self.role = StringVar()  # f2f, giver, receiver, observer
