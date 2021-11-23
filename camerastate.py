@@ -16,6 +16,14 @@ class CallCenterState():
         return self.callCenterMode.get() and self.turnOffAgentCamera.get() and self.userIsAgent.get()
 
 class CameraState():
+    """This class represents all of the properties that affect
+    the camera.
+    
+    Currently not accounting for:
+    - Activity onPause and onResume (Android)
+    - background detection when becoming Giver
+    - sub states of freezing
+    - separate state of camera when in GHoD mode as the Giver"""
     def __init__(self, camera_disabled):
         self.permissionsGranted = BooleanVar()
         self.role = StringVar()  # f2f, giver, receiver, observer
