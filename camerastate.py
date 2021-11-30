@@ -32,6 +32,15 @@ class CameraState():
         self.taskFieldSource = StringVar()  # live, freeze, photo, document
         self.cameraMenuAvailable = BooleanVar()
         self.cameraMenuButtonOn = BooleanVar()
+        """
+        Updating gssCameraOn could trigger some unintended state changes.
+        For example, if the Receiver sets gssCameraOn to false while
+        in Freeze mode, GSS will automatically perform some batch changes
+        which included exiting freeze mode.
+        So, it's best to only toggle this setting when actually has a 
+        visual effect. If you are the Receiver, only toggle when
+        task field is live.
+        """
         self.gssCameraOn = BooleanVar()
         self.physicalCameraState = StringVar()
         self.startCall(camera_disabled)
